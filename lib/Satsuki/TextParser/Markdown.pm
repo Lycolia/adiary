@@ -645,19 +645,23 @@ sub p_block_end {
 	my $ary  = shift;
 	my $blk  = shift;
 	my $pmode = shift;
-	my $lf_patch = $self->{lf_patch};
-	if (!@$blk) { return; }
+#       my $lf_patch = $self->{lf_patch};
+        if (!@$blk) { return; }
 
-	my $line = ($pmode ? '<p>' : '') . shift(@$blk);
-	foreach my $x (@$blk) {
-		$line =~ s|   *$| <br />|;	# 行末スペース2つ以上は強制改行
-		if ($lf_patch && 0x7f < ord(substr($line,-1)) &&  0x7f < ord($x)) {
-			# 日本語文章中に改行が含まれるとスペースになり汚いため行連結する。
-			$line .= $x;
-			next;
-		}
-		push(@$ary, $line);
-		$line = $x;
+        my $line = ($pmode ? '<p>' : '') . shift(@$blk);
+        foreach my $x (@$blk) {
+#                $line =~ s|   *$| <br />|;     # 行末スペース2つ以上は強制改行
+                # 行末スペースを削除
+                $line =~ s|   *$||;
+                # 改行はbr変換する
+                $line = $line . "<br />";
+#               if ($lf_patch && 0x7f < ord(substr($line,-1)) &&  0x7f < ord($x)) {
+#                       # 日本語文章中に改行が含まれるとスペースになり汚いため行連結する。
+#                       $line .= $x;
+#                       next;
+#               }
+                push(@$ary, $line);
+                $line = $x;
 	}
 	# \> によるエスケープ
 	$line =~ s/\\>/&gt;/g;
