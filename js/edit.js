@@ -685,7 +685,6 @@ window.onload = () => {
 	/** @type {HTMLTextAreaElement} */
     const txt = document.getElementById('editarea');
 	txt.onpaste = (e) => {
-		console.log('paste', e);
 		if (e.clipboardData.files.length) {
 			const pasteFile = e.clipboardData.files[0];
 			const ext = pasteFile.name.match(/\.([^\.]+)$/)[1];
