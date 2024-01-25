@@ -10,6 +10,7 @@ use Fcntl;
 our $VERSION    = 3.50;
 our $OUTVERSION = "3.50i";
 our $DATA_VERSION = 3.50;
+our $CUSTOM_VERSION = "0.0.2";
 ################################################################################
 # ■システム内部イベント
 ################################################################################
@@ -50,6 +51,7 @@ sub new {
 	$self->{DB}      = $DB;
 	$self->{VERSION} = $VERSION;
 	$self->{OUTVERSION} = $OUTVERSION;
+	$self->{CUSTOM_VERSION} =$CUSTOM_VERSION;
 
 	# ディフォルト値の設定
 	$self->SetDefaultValue();
