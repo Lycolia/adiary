@@ -384,7 +384,7 @@ sub parse_block {
 		#-------------------------------------------
 		# リストブロック
 		#-------------------------------------------
-		if ($x =~ /^ ? ? ?(\*|\+|\-|\d+\.) /) {
+		if ($x =~ /^ ? ?(\*|\+|\-|\d+\.) /) {
 			$self->p_block_end(\@ary, \@p_block, $pmode);
 			my $ulol = length($1)<2 ? 'ul' : 'ol';
 			my $mark = $self->{strict_list} ? $1 : undef;
@@ -394,7 +394,7 @@ sub parse_block {
 			while(@$lines) {
 				$x = shift(@$lines);
 				if ($x ne '' && ord(substr($x, -1)) < 4) { last; }
-				if ($blank && $x !~ /^ ? ? ?(\*|\+|\-|\d+\.) |^ /) { last; }
+				if ($blank && $x !~ /^ ? ?(\*|\+|\-|\d+\.) |^ /) { last; }
 				if ($blank && $1 && $mark) {	# リストの開始文字判定
 					my $m = $1;
 					$m = ($m =~ /^\d+\./) ? '0' : $m;
@@ -415,7 +415,7 @@ sub parse_block {
 			my %p;
 			while(@list) {
 				$x = shift(@list);
-				if ($x =~ /^( ? ? ?)(?:\*|\+|\-|\d+\.) +(.*)$/
+				if ($x =~ /^( ? ?)(?:\*|\+|\-|\d+\.) +(.*)$/
 				 && ($ul_indent == -1 || length($1) == $ul_indent)) {
 					if (@$li) {
 						push(@ul, $li);
@@ -457,9 +457,9 @@ sub parse_block {
 					push(@ary, $p{$li} ? "<li><p>$li->[0]</p></li>" : "<li>$li->[0]</li>");
 					next;
 				}
-				# [M] リストネスト時は先頭スペースを最大4つ除去する
+				# [M] リストネスト時は先頭スペースを最大2つ除去する
 				foreach(@$li) {
-					$_ =~ s/^  ? ? ?//;
+					$_ =~ s/^  ?//;
 				}
 				my $blk = $self->parse_block($li, 1);
 				if ($blk->[$#$blk] eq '') { pop(@$blk); }
