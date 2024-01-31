@@ -8,7 +8,7 @@ use Satsuki::AutoLoader;
 use Fcntl;
 #-------------------------------------------------------------------------------
 our $VERSION    = 3.50;
-our $OUTVERSION = "3.50i";
+our $OUTVERSION = "3.50j";
 our $DATA_VERSION = 3.50;
 our $CUSTOM_VERSION = "0.0.2";
 ################################################################################
