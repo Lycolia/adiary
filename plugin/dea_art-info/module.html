@@ -3,9 +3,7 @@
 		<@ifexec(ps.hatena_bicon, begin)>
 		<a class="http-bookmark" href="https://b.hatena.ne.jp/entry/<@url>"><img src="//b.st-hatena.com/entry/image/<@url>" alt="はてブ数"></a>
 		<$end>
-		<$x = if(t.priority, ps.wiki_tm, ps.tmdate)>
-		<@ifexec(x==3,      begin)><span class="write-date"><@t.year>/<@t.mon>/<@t.day></span><$end>
-		<@ifexec(x!=3 && x, begin)><span class="write-date"><@print_tmf('%Y/%m/%d %H:%M ', if(x==1, t.tm, t.update_tm))></span><$end>
+		<@ifexec(!t.priority, begin)><time datetime="<@t.year>-<@t.mon>-<@t.day>"><@t.year>/<@t.mon>/<@t.day></time><$end>
 		<@ifexec(t.tags, begin)><span class="tags"><@v.make_taglinks(t.tags)></span><$end>
 		<@ifexec(ps.author, begin)><span class="author" title="<@t.id>"><@t.name></span><$end>
 		<@ifexec(v.check_editor(t), begin)><a href="<@v.myself2>0<@t.pkey>?edit" class="edit-article">（編集）</a><$end>
