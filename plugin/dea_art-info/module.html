@@ -1,10 +1,15 @@
-	<$ps = v.load_plgset('<@this>')>
-	<div class="art-info" data-module-name="<@this>" data-fix="1">
-		<@ifexec(ps.hatena_bicon, begin)>
-		<a class="http-bookmark" href="https://b.hatena.ne.jp/entry/<@url>"><img src="//b.st-hatena.com/entry/image/<@url>" alt="はてブ数"></a>
-		<$end>
-		<@ifexec(!t.priority, begin)><time datetime="<@t.year>-<@t.mon>-<@t.day>"><@t.year>/<@t.mon>/<@t.day></time><$end>
-		<@ifexec(t.tags, begin)><span class="tags"><@v.make_taglinks(t.tags)></span><$end>
-		<@ifexec(ps.author, begin)><span class="author" title="<@t.id>"><@t.name></span><$end>
-		<@ifexec(v.check_editor(t), begin)><a href="<@v.myself2>0<@t.pkey>?edit" class="edit-article">（編集）</a><$end>
-	</div>
+<$ps = v.load_plgset('<@this>')>
+<div class="art-info" data-module-name="<@this>" data-fix="1">
+	<@ifexec(ps.hatena_bicon, begin)>
+	<a class="http-bookmark" href="https://b.hatena.ne.jp/entry/<@url>"><img src="//b.st-hatena.com/entry/image/<@url>" alt="はてブ数"></a>
+	<$end>
+	<@ifexec(!t.priority, begin)>
+		<dl>
+			<dt>投稿日：</dt>
+			<dd><time datetime="<@t.year>-<@t.mon>-<@t.day>"><@t.year>/<@t.mon>/<@t.day></time></dd>
+		</dl>
+	<$end>
+	<@ifexec(t.tags, begin)><span class="tags"><@v.make_taglinks(t.tags)></span><$end>
+	<@ifexec(ps.author, begin)><span class="author" title="<@t.id>"><@t.name></span><$end>
+	<@ifexec(v.check_editor(t), begin)><a href="<@v.myself2>0<@t.pkey>?edit" class="edit-article">（編集）</a><$end>
+</div>
