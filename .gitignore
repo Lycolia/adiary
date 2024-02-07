@@ -42,7 +42,6 @@ lycolia
 data/textparser_plugin_cache.dat
 data/system_config.dat
 data/default_setting.dat
-skel.local
 
 !/pub/.gitkeep
 
