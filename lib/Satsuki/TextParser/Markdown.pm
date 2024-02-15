@@ -475,9 +475,9 @@ sub parse_block {
 					push(@ary, $p{$li} ? "<li><p>$li->[0]</p></li>" : "<li>$li->[0]</li>");
 					next;
 				}
-				# [M] リストネスト時は先頭スペースを最大2つ除去する
+				# [M] リストネスト時は先頭スペースを最大3つ除去する
 				foreach(@$li) {
-					$_ =~ s/^  ?//;
+					$_ =~ s/^   ?//;
 				}
 				my $blk = $self->parse_block( $self->parse_special_block($li, 1), 1 );
 				if ($blk->[$#$blk] eq '') { pop(@$blk); }
@@ -672,8 +672,8 @@ sub p_block_end {
 #                       $line .= $x;
 #                       next;
 #               }
-                push(@$ary, $line);
-                $line = $x;
+		push(@$ary, $line);
+		$line = $x;
 	}
 	# \> によるエスケープ
 	$line =~ s/\\>/&gt;/g;
