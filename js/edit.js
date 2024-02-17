@@ -625,4 +625,87 @@ $edit.on("drop", function(evt) {
 });
 
 //##############################################################################
+
+
+const uploadFile = (file, successCb, errorCb) => {
+	let date = $('#edit-date').val().toString() || '';
+	let year;
+	let month;
+	if (date.match(/^\d\d\d\d[\-\/]\d\d/)) {
+		year = date.substr(0,4);
+		month  = date.substr(5,2);
+	} else {
+		let d = new Date();
+		year = d.getFullYear();
+		month  = (101 + d.getMonth()).toString().substr(1);
+	};
+	const folder = `adiary/${year}/${month}/`;
+
+	const fd = new FormData();
+	
+	fd.append('paste', 1); // 謎パラメタ
+	fd.append('size', 320); // TODO: サムネサイズ：どっかで既定値を設定したい
+	fd.append('csrf_check_key', undefined); // 使われていないゴミ
+	fd.append('action', 'etc/ajax_upload');
+	fd.append('folder', folder);
+	fd.append('file_ary', file);
+
+	// submit処理
+	$.ajax(`${adiary.myself}?etc/ajax_dummy`, {
+		method: 'POST',
+		contentType: false,
+		processData: false,
+		data: fd,
+		dataType: 'json',
+		error: function(xhr) {
+			console.log('[ajax_upload()] http post fail');
+			//errorCb;
+		},
+		success: function(data) {
+			console.log('[ajax_upload()] http post success');
+			successCb(data, folder);
+		}
+		// complete: function(xhr, text) {
+		// 	$prog.hide();
+		// 	if (option.complete) option.complete(xhr, text);
+		// },
+		// xhr: function() {
+		// 	var XHR = $.ajaxSettings.xhr();
+		// 	XHR.upload.addEventListener('progress', function(e){
+		// 		var par = Math.floor(e.loaded*100/e.total + 0.5);
+		// 		$prog.adiaryProgressbar({ value: par });
+		// 	});
+		// 	return XHR;
+		// }
+	});
+}
+
+//---画像貼り付け処理テスト
+window.onload = () => {
+	/** @type {HTMLTextAreaElement} */
+    const txt = document.getElementById('editarea');
+	txt.onpaste = (e) => {
+		if (e.clipboardData.files.length) {
+			const pasteFile = e.clipboardData.files[0];
+			const ext = pasteFile.name.match(/\.([^\.]+)$/)[1];
+			const dt = new Date();
+			const timestamp = `${dt.getFullYear()}-${dt.getMinutes() + 1}-${dt.getDate()}_${dt.getHours()}-${dt.getMinutes()}-${dt.getSeconds()}-${dt.getMilliseconds()}`
+			const file = new File([pasteFile], `paste-image-${timestamp}.${ext}`, { type: pasteFile.type });
+			uploadFile(file, (data, folder) => {
+				upload_files_insert(data, {
+					folder:		folder, // TODO: 突っ込むフォルダ：どっかで既定値を設定したい
+					thumbnail:	true, // TODO: サムネ：どっかで既定値を設定したい
+					caption:	'',
+					exif:		false, // TODO: 回り込み指定：どっかで既定値を設定したい
+					class:		'' // TODO: 回り込み指定：どっかで既定値を設定したい
+				});
+			});
+		} else {
+			// 何もしない
+		}
+	}
+};
+
 });
+
+
