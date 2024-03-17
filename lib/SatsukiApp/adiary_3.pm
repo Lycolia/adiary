@@ -487,10 +487,6 @@ sub do_upload {
 	my $file_name = $file_h->{name};
 	my $file_size = $file_h->{size};
 	my $tmp_file  = $file_h->{tmp};		# 読み込んだファイルデータ(tmp file)
-	if (!$self->check_file_name($file_name)) {
-		$ROBJ->message("File name error : %s", $file_h->{name});
-		return 2;
-	}
 
 	# 拡張子チェック
 	if (! $self->album_check_ext($file_name)) {
@@ -534,11 +530,6 @@ sub remake_thumbnail {
 	my $files = $form->{file_ary};
 	my $size  = $form->{size};
 
-	# filesの値チェック
-	foreach(@$files) {
-		if (!$self->check_file_name($_)) { return -1; }
-	}
-
 	# サムネイル生成
 	$self->make_thumbnail( $dir, $files, {
 		size     => $form->{size},
@@ -559,11 +550,6 @@ sub remove_exifjpeg {
 
 	my $dir   = $self->image_folder_to_dir( $form->{folder} ); # 値check付
 	my $files = $form->{file_ary};
-
-	# filesの値チェック
-	foreach(@$files) {
-		if (!$self->check_file_name($_)) { return -1; }
-	}
 
 	# Exif削除
 	my $jpeg = $ROBJ->loadpm('Jpeg');
@@ -709,9 +695,6 @@ sub rename_file {
 	$ROBJ->fs_encode(\$old );
 	$ROBJ->fs_encode(\$name);
 
-	if ( !$self->check_file_name($old ) || !$self->album_check_ext($old ) ) { return -2; }
-	if ( !$self->check_file_name($name) || !$self->album_check_ext($name) ) { return -1; }
-
 	my $r  = rename("$dir$old", "$dir$name");
 	my $r2;
 	# 画像ファイルのみ移動を試みる
@@ -744,10 +727,6 @@ sub delete_files {
 	my $files = $form->{file_ary} || [];
 	my @fail;
 	foreach(@$files) {
-		if ( !$self->check_file_name($_) ) {
-			push(@fail, $_);
-			next;
-		}
 		my $file = $_;
 		$ROBJ->fs_encode(\$file);
 		my $r = unlink("$dir$file");
