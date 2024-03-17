@@ -1,4 +1,4 @@
-# adiary-extend
+# adiary-extends
 
 このプログラムは[nabe-abk/adiary](https://github.com/nabe-abk/adiary)のフォークです。
 原典となる著作権表記はオリジナルのREADMEである、[README.original.md](README.original.md)に記しています。
