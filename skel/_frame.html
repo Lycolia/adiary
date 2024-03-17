@@ -41,7 +41,7 @@
 <@if(canonical_url, #'<link rel="canonical" href="<@canonical_url>">\n')>
 <@>
 <@forexec(t, v.load_rss_files(), begin)>
-<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="<@Basepath><@v.blogpub_dir><@t>" /> 
+<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="<@Basepath><@v.blogpub_dir><@t>" />
 <$end>
 <@> ショートカットアイコン
 <link rel="icon" href="<@Basepath><@if(s.iconfile, s.iconfile, #'<@v.pubdist_dir>default-icon.png')>">
@@ -103,7 +103,7 @@
 <footer id="footer" data-module-name="def_footer" data-fix="1"><div><!--フッタ-->
 <@ps.footer_txt>
 <@ifexec(ps.outver ne '0', begin)>
-<div class="adiary"><a href="https://adiary.org/" title="High Performance CMS">adiary</a> Version <@v.OUTVERSION></div>
+<div class="adiary"><a href="https://adiary.org/" title="High Performance CMS">adiary</a> Version <@v.OUTVERSION> / Extends Version <@v.EXTENDS_VERSION></div>
 <$end>
 </div></footer>
 </div> <!-- End of #adiary-body -->
