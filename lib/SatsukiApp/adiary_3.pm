@@ -24,7 +24,7 @@ sub init_image_dir {
 	$ROBJ->mkdir($dir);
 	$ROBJ->mkdir($dir . '.trashbox/');	# ごみ箱フォルダ
 
-	# ブォルダリストの生成
+	# フォルダリストの生成
 	$self->genarete_imgae_dirtree();
 }
 
@@ -487,23 +487,33 @@ sub do_upload {
 	my $file_name = $file_h->{name};
 	my $file_size = $file_h->{size};
 	my $tmp_file  = $file_h->{tmp};		# 読み込んだファイルデータ(tmp file)
-	if (!$self->check_file_name($file_name)) {
-		$ROBJ->message("File name error : %s", $file_h->{name});
-		return 2;
-	}
 
 	# 拡張子チェック
-	if (! $self->album_check_ext($file_name)) { 
+	if (! $self->album_check_ext($file_name)) {
 		$ROBJ->message("File extension error : %s", $file_name);
 		return 3;
 	}
 
 	# ファイルの保存
 	my $save_file = $dir . $ROBJ->fs_encode($file_name);
-	if (-e $save_file && !$file_h->{overwrite}) {	# 同じファイルが存在する
-		if ((-s $save_file) != $file_size) {	# ファイルサイズが同じならば、同一と見なす
-			$ROBJ->message('Save failed ("%s" already exists)', $file_name);
-			return 10;
+	if (-e $save_file && !$file_h->{overwrite}) {	# 同じ名前のファイルが存在する
+		# リネームして保存
+		my $timestamp = $ROBJ->time2timehash(time);
+		my $safe_filename = $ROBJ->fs_encode($file_name);
+		$safe_filename =~ /^(?<name>.*?)\.(?<ext>[^\.]+)$/;
+		my $full_filename = $+{name} . $timestamp->{year} . $timestamp->{mon} . $timestamp->{day} . $timestamp->{hour} . $timestamp->{min} . $timestamp->{sec} . "." . $+{ext};
+		my $rename_file = $dir . $full_filename;
+
+		my $fail;
+		if ($tmp_file) {
+			if ($ROBJ->file_move($tmp_file, $rename_file)) { $fail=21; }
+		} else {
+			if ($ROBJ->fwrite_lines($rename_file, $file_h->{data})) { $fail=22; }
+		}
+
+		if ($fail) {	# 保存失敗
+			$ROBJ->message("File can't write '%s'", $file_name);
+			return $fail;
 		}
 	} else {
 		my $fail;
@@ -534,11 +544,6 @@ sub remake_thumbnail {
 	my $files = $form->{file_ary};
 	my $size  = $form->{size};
 
-	# filesの値チェック
-	foreach(@$files) {
-		if (!$self->check_file_name($_)) { return -1; }
-	}
-
 	# サムネイル生成
 	$self->make_thumbnail( $dir, $files, {
 		size     => $form->{size},
@@ -559,11 +564,6 @@ sub remove_exifjpeg {
 
 	my $dir   = $self->image_folder_to_dir( $form->{folder} ); # 値check付
 	my $files = $form->{file_ary};
-
-	# filesの値チェック
-	foreach(@$files) {
-		if (!$self->check_file_name($_)) { return -1; }
-	}
 
 	# Exif削除
 	my $jpeg = $ROBJ->loadpm('Jpeg');
@@ -709,9 +709,6 @@ sub rename_file {
 	$ROBJ->fs_encode(\$old );
 	$ROBJ->fs_encode(\$name);
 
-	if ( !$self->check_file_name($old ) || !$self->album_check_ext($old ) ) { return -2; }
-	if ( !$self->check_file_name($name) || !$self->album_check_ext($name) ) { return -1; }
-
 	my $r  = rename("$dir$old", "$dir$name");
 	my $r2;
 	# 画像ファイルのみ移動を試みる
@@ -744,10 +741,6 @@ sub delete_files {
 	my $files = $form->{file_ary} || [];
 	my @fail;
 	foreach(@$files) {
-		if ( !$self->check_file_name($_) ) {
-			push(@fail, $_);
-			next;
-		}
 		my $file = $_;
 		$ROBJ->fs_encode(\$file);
 		my $r = unlink("$dir$file");
@@ -1069,7 +1062,7 @@ sub edit_articles {
 			my $tags = join(",",@tag);
 			my $r = $DB->update_match("${blogid}_art", { tags => $tags }, 'pkey', $pkey);
 			if (!$r) { next; }
-			
+
 			# タグ情報書き換え
 			$cnt += 1;
 			$DB->delete_match("${blogid}_tagart", 'a_pkey', $pkey);
@@ -1176,7 +1169,7 @@ sub edit_comment {
 		$event_name = 'COMMENTS_EDIT';
 
 		# 非公開記事のコメントは公開しない
-		my $ary = $DB->select_match("${blogid}_art", 
+		my $ary = $DB->select_match("${blogid}_art",
 			'pkey', \@a_pkeys,
 			'*cols', ['pkey', 'enable']
 		);
