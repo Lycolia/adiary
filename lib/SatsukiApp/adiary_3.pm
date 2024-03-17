@@ -24,7 +24,7 @@ sub init_image_dir {
 	$ROBJ->mkdir($dir);
 	$ROBJ->mkdir($dir . '.trashbox/');	# ごみ箱フォルダ
 
-	# ブォルダリストの生成
+	# フォルダリストの生成
 	$self->genarete_imgae_dirtree();
 }
 
@@ -493,7 +493,7 @@ sub do_upload {
 	}
 
 	# 拡張子チェック
-	if (! $self->album_check_ext($file_name)) { 
+	if (! $self->album_check_ext($file_name)) {
 		$ROBJ->message("File extension error : %s", $file_name);
 		return 3;
 	}
@@ -1069,7 +1069,7 @@ sub edit_articles {
 			my $tags = join(",",@tag);
 			my $r = $DB->update_match("${blogid}_art", { tags => $tags }, 'pkey', $pkey);
 			if (!$r) { next; }
-			
+
 			# タグ情報書き換え
 			$cnt += 1;
 			$DB->delete_match("${blogid}_tagart", 'a_pkey', $pkey);
@@ -1176,7 +1176,7 @@ sub edit_comment {
 		$event_name = 'COMMENTS_EDIT';
 
 		# 非公開記事のコメントは公開しない
-		my $ary = $DB->select_match("${blogid}_art", 
+		my $ary = $DB->select_match("${blogid}_art",
 			'pkey', \@a_pkeys,
 			'*cols', ['pkey', 'enable']
 		);
