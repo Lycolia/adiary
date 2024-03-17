@@ -610,7 +610,6 @@ sub p_block_end {
 
 	my $line = ($pmode ? '<p>' : '') . shift(@$blk);
 	foreach my $x (@$blk) {
-#   $line =~ s|   *$| <br />|;     # 行末スペース2つ以上は強制改行
     # 改行はbr変換する
     $line = $line . "<br />";
 		if ($lf_patch && 0x7f < ord(substr($line,-1)) &&  0x7f < ord($x)) {
