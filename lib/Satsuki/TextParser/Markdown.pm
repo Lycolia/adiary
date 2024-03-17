@@ -610,7 +610,8 @@ sub p_block_end {
 
 	my $line = ($pmode ? '<p>' : '') . shift(@$blk);
 	foreach my $x (@$blk) {
-		$line =~ s|   *$| <br />|;	# 行末スペース2つ以上は強制改行
+    # 改行はbr変換する
+    $line = $line . "<br />";
 		if ($lf_patch && 0x7f < ord(substr($line,-1)) &&  0x7f < ord($x)) {
 			# 日本語文章中に改行が含まれるとスペースになり汚いため行連結する。
 			$line .= $x;
@@ -740,7 +741,7 @@ sub parse_inline {
 
 		if ($self->{gfm_ext}) {
 			$_ =~ s#(^|\W)_([^_]*)_(\W|$)#$1<em>$2</em>$3#g;		# [GFM]
-		} else {	
+		} else {
 			$_ =~ s|_( [^_]*)_ |<em>$1</em>|xg;				# [M]
 		}
 
