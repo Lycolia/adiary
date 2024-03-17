@@ -10,6 +10,7 @@ use Fcntl;
 our $VERSION    = 3.50;
 our $OUTVERSION = "3.50n";
 our $DATA_VERSION = 3.50;
+our $EXTEND_VERSION = "0.1.0";
 ################################################################################
 # ■システム内部イベント
 ################################################################################
@@ -541,7 +542,7 @@ sub set_and_select_blog {
 	# myself(通常用,QUERY用)、myself2(PATH_INFO用) の設定
 	if ($self->{subdomain_mode}) {
 		$self->{myself}  = '/';
-		$self->{myself2} = '/';	
+		$self->{myself2} = '/';
 	} elsif ($blogid ne $self->{sys}->{default_blogid}) {
 		$self->{myself}  = $ROBJ->{myself2} . "$blogid/";
 		$self->{myself2} = $ROBJ->{myself2} . "$blogid/";
@@ -632,7 +633,7 @@ sub save_blogset_sys {
 
 ################################################################################
 # ■スケルトン用サブルーチン
-############################################################################### 
+###############################################################################
 #-------------------------------------------------------------------------------
 # ●システムモードへ
 #-------------------------------------------------------------------------------
@@ -761,7 +762,7 @@ sub load_article {
 # ●記事のロード
 #-------------------------------------------------------------------------------
 # opt.load_hidden	enableでないものもロード
-# opt.loads		loadする記事数(max) 
+# opt.loads		loadする記事数(max)
 # opt.pagemode		ページ処理する
 # opt.no_override	公開フラグ等をオーバーライドしない
 # opt.blog_only		ブログ記事のみをロードします
@@ -1822,7 +1823,7 @@ sub allow_blogs {
 	my $self  = shift;
 	my $allow = $self->{sys}->{blogs_allow};
 	if ($allow eq '') { return 1; }		# OK
-	
+
 	my $auth = $self->{ROBJ}->{Auth};
 	if ($allow eq 'users') { return $auth->{ok}; }
 	return $auth->{isadmin};	# $allow == 'admin'
