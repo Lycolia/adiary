@@ -496,10 +496,24 @@ sub do_upload {
 
 	# ファイルの保存
 	my $save_file = $dir . $ROBJ->fs_encode($file_name);
-	if (-e $save_file && !$file_h->{overwrite}) {	# 同じファイルが存在する
-		if ((-s $save_file) != $file_size) {	# ファイルサイズが同じならば、同一と見なす
-			$ROBJ->message('Save failed ("%s" already exists)', $file_name);
-			return 10;
+	if (-e $save_file && !$file_h->{overwrite}) {	# 同じ名前のファイルが存在する
+		# リネームして保存
+		my $timestamp = $ROBJ->time2timehash(time);
+		my $safe_filename = $ROBJ->fs_encode($file_name);
+		$safe_filename =~ /^(?<name>.*?)\.(?<ext>[^\.]+)$/;
+		my $full_filename = $+{name} . $timestamp->{year} . $timestamp->{mon} . $timestamp->{day} . $timestamp->{hour} . $timestamp->{min} . $timestamp->{sec} . "." . $+{ext};
+		my $rename_file = $dir . $full_filename;
+
+		my $fail;
+		if ($tmp_file) {
+			if ($ROBJ->file_move($tmp_file, $rename_file)) { $fail=21; }
+		} else {
+			if ($ROBJ->fwrite_lines($rename_file, $file_h->{data})) { $fail=22; }
+		}
+
+		if ($fail) {	# 保存失敗
+			$ROBJ->message("File can't write '%s'", $file_name);
+			return $fail;
 		}
 	} else {
 		my $fail;
